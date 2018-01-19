@@ -5,11 +5,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DeepdiveTranslationWebApp.Models;
+using System.Globalization;
+using Microsoft.Extensions.Localization;
+using DeepdiveTranslationWebApp.Resources;
 
 namespace DeepdiveTranslationWebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IStringLocalizer localizer;
+        public HomeController(IStringLocalizerFactory factory)
+        {
+            localizer = factory.Create(typeof(SharedResources));
+        }
         public IActionResult Index()
         {
             return View();
@@ -17,14 +25,14 @@ namespace DeepdiveTranslationWebApp.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = CultureInfo.CurrentUICulture.ToString();
 
             return View();
         }
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = localizer["ContactUs"];
 
             return View();
         }

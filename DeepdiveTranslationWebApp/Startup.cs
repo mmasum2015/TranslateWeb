@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using DeepdiveTranslationWebApp.Data;
 using DeepdiveTranslationWebApp.Models;
 using DeepdiveTranslationWebApp.Services;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace DeepdiveTranslationWebApp
 {
@@ -37,11 +39,32 @@ namespace DeepdiveTranslationWebApp
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
+            services.AddLocalization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en-US"),
+                new CultureInfo("sv-SE")
+            };
+
+            var options = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en-US"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            };
+
+            options.RequestCultureProviders = new[]
+            {
+                new CookieRequestCultureProvider(){Options = options}
+            };
+
+            app.UseRequestLocalization(options);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
